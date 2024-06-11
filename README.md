@@ -2,6 +2,14 @@
 
 A simple To-Do List application built with React and TypeScript. This application allows users to add, remove, and mark tasks as completed. It includes features such as input validation, dynamic task display, optional sorting, filtering, and localStorage integration.
 
+## Week-2 
+
+- Understanding the React component lifecycle methods
+- Working with lifecycle methods like componentDidMount, componentDidUpdate, and componentWillUnmount
+- Introduction to state management in React
+- Using React hooks (useState, useEffect) for managing state
+- Managing component state with class components
+
 ## Features
 
 - Add new tasks with input validation
