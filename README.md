@@ -1,106 +1,46 @@
-# Celebal-Assignment 2
+# Getting Started with Create React App
 
-A simple To-Do List application built with React and TypeScript. This application allows users to add, remove, and mark tasks as completed. It includes features such as input validation, dynamic task display, optional sorting, filtering, and localStorage integration.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Week-2 
+## Available Scripts
 
-- Understanding the React component lifecycle methods
-- Working with lifecycle methods like componentDidMount, componentDidUpdate, and componentWillUnmount
-- Introduction to state management in React
-- Using React hooks (useState, useEffect) for managing state
-- Managing component state with class components
+In the project directory, you can run:
 
-## Features
+### `npm start`
 
-- Add new tasks with input validation
-- Remove tasks
-- Mark tasks as completed
-- Optional sorting of tasks
-- Filtering tasks (e.g., all, completed, active)
-- Persist tasks using localStorage
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-## Tech Stack
+The page will reload if you make edits.\
+You will also see any lint errors in the console.
 
-- React
-- TypeScript
-- Material UI
+### `npm test`
 
-## Getting Started
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### Prerequisites
+### `npm run build`
 
-Make sure you have Node.js and npm installed on your machine.
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-### Installation
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/your-username/react-todo-list.git
-   cd react-todo-list
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
+### `npm run eject`
 
-2. Install the dependencies:
-   ```sh
-   npm install
-   
-3. Start the development server:
-   ```sh
-     npm start
-   
-  This will open the application in your default web browser at http://localhost:3000.
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
 
-## Usage
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-1. **Adding a Task**:
-   - Type a task in the input field and press Enter or click the "Add Task" button. The task will be added to the list.
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-2. **Removing a Task**:
-   - Click the "Remove" button next to the task you want to delete. The task will be removed from the list.
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-3. **Marking a Task as Completed**:
-   - Click the checkbox next to a task to mark it as completed. The task will be visually indicated as completed (e.g., crossed out).
+## Learn More
 
-4. **Sorting and Filtering**:
-   - Use the provided controls to sort tasks by name or date.
-   - Use the filtering options to view all tasks, only completed tasks, or only active tasks.
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-## Local Storage Integration
-
-The tasks are persisted in the browser's localStorage. This means that when you refresh the page or close and reopen the browser, your tasks will still be there. Here’s how it works:
-
-- **Saving Tasks**: When you add, remove, or complete a task, the updated list of tasks is saved to localStorage.
-- **Loading Tasks**: When the application loads, it checks localStorage for any saved tasks and loads them into the task list.
-- **Updating Tasks**: Any changes to the tasks (such as marking a task as completed or deleting a task) automatically update the tasks in localStorage.
-
-This ensures that your to-do list is persistent and will not be lost upon page reload or browser restart.
-
-## Testing
-
-To ensure the application works as expected, follow these steps:
-
-1. **Adding a Task**:
-   - Type a task in the input field and press Enter or click the "Add Task" button.
-   - Verify that the task appears in the list.
-
-2. **Removing a Task**:
-   - Click the "Remove" button next to a task.
-   - Verify that the task is removed from the list.
-
-3. **Marking a Task as Completed**:
-   - Click the checkbox next to a task.
-   - Verify that the task is marked as completed (e.g., the text is crossed out or visually different).
-
-4. **LocalStorage Persistence**:
-   - Add a task.
-   - Refresh the page.
-   - Verify that the task is still in the list, indicating it was saved in localStorage.
-
-5. **Sorting and Filtering**:
-   - Add multiple tasks with different statuses (completed and active).
-   - Use the sort control to sort tasks by name or date.
-   - Use the filter control to view all tasks, only completed tasks, or only active tasks.
-   - Verify that the sorting and filtering functionalities work as expected.
-
-By following these steps, you can confirm that the core functionalities of the To-Do List application are working correctly.
-
-   
+To learn React, check out the [React documentation](https://reactjs.org/).
