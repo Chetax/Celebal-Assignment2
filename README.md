@@ -24,6 +24,11 @@ A simple To-Do List application built with React and TypeScript. This applicatio
 - React
 - TypeScript
 - Material UI
+- React state management tool :- Zustand
+- Firebase Auth
+- Node js & Express.js
+- MongoDB
+  
 
 ## Getting Started
 
@@ -35,18 +40,31 @@ Make sure you have Node.js and npm installed on your machine.
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/react-todo-list.git
-   cd react-todo-list
+   git clone git@github.com:your-username/Celebal-Assignment2.git
+   cd Celebal-Assignment2
 
 
-2. Install the dependencies:
+2. Install the dependencies For Frontend Site:
    ```sh
+   cd Frontend
+   npm install
+  
+
+3. Install the dependencies For Backend Site:
+   ```sh
+   cd Backend
    npm install
    
-3. Start the development server:
+4. Start the development frontend server:
    ```sh
-     npm start
+   cd Frontend
+   npm start
    
+5. Start the development backend server:
+   ```sh
+   cd Backend
+   npm start
+
   This will open the application in your default web browser at http://localhost:3000.
 
 ## Usage
