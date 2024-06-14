@@ -1,22 +1,28 @@
 import React, { useState } from "react";
 import logo from "./Logo.png";
 import { FaPen } from "react-icons/fa";
+import './Todo.css'
 
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   UploadOutlined,
+  CheckSquareOutlined,
+  FileDoneOutlined ,
   SettingOutlined,
   CalendarOutlined,
   AppstoreOutlined,
 } from "@ant-design/icons";
 
-import { Button, Layout, Menu, theme ,Card,Checkbox} from "antd";
+import { Button, Layout, Menu, theme ,Card,Checkbox,TimePicker} from "antd";
+import dayjs from 'dayjs';  
 
+const format = 'HH:mm';
 const { Header, Sider, Content } = Layout;
 
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const [pen,setpen]=useState<boolean>(true);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -80,16 +86,22 @@ const App: React.FC = () => {
           />
         </Header>
         <Content  style={{background: colorBgContainer,borderRadius: borderRadiusLG,padding:"0 15px"}}>
-        <Card   hoverable     style={{ width: '80%',padding:"0" }}  >
+        <Card   hoverable className="Card">
 
-        <div className="div" style={{display:'flex',alignItems:'center',justifyContent:"space-between"}}>    
-<div className="div1">
-<input type="text" style={{ fontSize: "20px",width:"40vw", border: "none", background: "none", outline: "none" }} />
-
+<div id="divzero" style={{display:'flex',alignItems:'center',justifyContent:"space-between"}}>    
+<div className="divone">
+<input type="text" readOnly={pen} style={{ fontSize: "20px",width:"35vw", border: "none", background: "none", outline: "none" }} />
 </div>
 
-<div className="div2" style={{display:'flex',alignItems:'center',justifyContent:"space-between",width:"50px"}}>
-<FaPen/>
+<div className="div2" style={{display:'flex',alignItems:'center',justifyContent:"space-between",width:"150px"}}>
+<TimePicker 
+      className="custom-time-picker"
+      style={{ width: "90px", border: "none", background: "none", outline: "none" }}
+      defaultValue={dayjs('12:08', format)} 
+      format={format}
+      disabled={pen}
+    />
+{pen===true ?  <FaPen onClick={(e)=>setpen(!pen)}/> : <FileDoneOutlined onClick={(e)=>setpen(!pen)}/>}
 <Checkbox></Checkbox>
 </div>
 </div>
