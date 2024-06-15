@@ -6,16 +6,15 @@ import './Todo.css'
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  UploadOutlined,
-  CheckSquareOutlined,
   FileDoneOutlined ,
   SettingOutlined,
   CalendarOutlined,
   AppstoreOutlined,
+  PlusOutlined
 } from "@ant-design/icons";
 
-import { Button, Layout, Menu, theme ,Card,Checkbox,TimePicker} from "antd";
-import dayjs from 'dayjs';  
+import { Button, Layout, Modal,Menu, theme ,Card,Checkbox,TimePicker,TimePickerProps} from "antd";
+import dayjs ,{ Dayjs } from 'dayjs';  
 
 const format = 'HH:mm';
 const { Header, Sider, Content } = Layout;
@@ -23,10 +22,27 @@ const { Header, Sider, Content } = Layout;
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [pen,setpen]=useState<boolean>(true);
+  const [task,settask]=useState<string>("");
+  const [time, setTime] = useState<Dayjs | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {setIsModalOpen(true);};
+  const onChange: TimePickerProps['onChange'] = (time, timeString) => {
+    console.log(time, timeString);
+    setTime(time); // Update state with selected time
+  };
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
+  console.log({task,time});
   return (
     <Layout style={{ height: "100vh", width: "100vw" }}>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -108,9 +124,25 @@ const App: React.FC = () => {
   </Card>
 
         </Content>
+
+        <Button onClick={showModal} type="link" style={{width:'auto',position:"absolute",top:"80%",left:"90%",}}> <PlusOutlined  style={{fontSize:"5vh"}}/> </Button>
+        <Modal title="Todo" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+    
+    <div className="div" style={{display:'flex',alignContent:'center',justifyContent:'start'}}>  <label style={{fontSize:"20px"}}>Enter Task : </label>  <input type="text" value={task} onChange={(e)=>{settask(e.target.value)}} style={{width:"15vw",marginLeft:"15px"}} /></div>
+    <div className="div" style={{display:'flex',alignContent:'center',justifyContent:'start',marginTop:"15px"}}>  <label style={{fontWeight:"",fontSize:"20px"}}>DeadLine    : </label>   <TimePicker   onChange={onChange} style={{marginLeft:"26px"}} defaultValue={dayjs('12:08', format)} format={format} />;</div>
+     
+      </Modal>
+   
       </Layout>
+  
     </Layout>
   );
 };
 
+
+
+/*
+
+
+*/
 export default App;
