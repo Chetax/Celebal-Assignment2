@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { StyleProvider } from '@ant-design/cssinjs';
 import { BrowserRouter } from 'react-router-dom';
 
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

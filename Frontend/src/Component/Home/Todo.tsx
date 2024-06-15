@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 import logo from "./Logo.png";
 import { FaPen } from "react-icons/fa";
 import './Todo.css'
-
+import toast, { Toaster } from 'react-hot-toast';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -13,28 +13,57 @@ import {
   PlusOutlined
 } from "@ant-design/icons";
 
+
 import { Button, Layout, Modal,Menu, theme ,Card,Checkbox,TimePicker,TimePickerProps} from "antd";
 import dayjs ,{ Dayjs } from 'dayjs';  
-
+interface Task{
+  task:string,
+  time:Dayjs |null
+  }
 const format = 'HH:mm';
 const { Header, Sider, Content } = Layout;
-
+let taskArray:Array<Task>=[];
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [pen,setpen]=useState<boolean>(true);
   const [task,settask]=useState<string>("");
   const [time, setTime] = useState<Dayjs | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   const showModal = () => {setIsModalOpen(true);};
+  const notifysucess = () => toast.success('Successfully created!');
+  const notifyError = () => {
+    toast.error("Error!");
+  };
   const onChange: TimePickerProps['onChange'] = (time, timeString) => {
-    console.log(time, timeString);
-    setTime(time); // Update state with selected time
+    setTime(time);  
   };
   const handleOk = () => {
-    setIsModalOpen(false);
-  };
+    const formattedTime = time ? time.format(format) : null;
 
+    taskArray.map((e)=>{
+      if(e.task==task ){
+        notifyError();
+        return;
+      }
+    });
+ 
+    if(task===""||time===null) {
+      notifyError();
+    }
+    else{
+      taskArray.push({ task, time: formattedTime ? dayjs(formattedTime, format) : null });
+      console.log({ task, time: time ? time.format(format) : null });
+      settask("");
+      setTime(null);
+      notifysucess()
+    }
+
+    setIsModalOpen(false);
+
+  };
+ 
+ 
   const handleCancel = () => {
     setIsModalOpen(false);
   };
@@ -102,29 +131,41 @@ const App: React.FC = () => {
           />
         </Header>
         <Content  style={{background: colorBgContainer,borderRadius: borderRadiusLG,padding:"0 15px"}}>
-        <Card   hoverable className="Card">
+      
+      { 
+        taskArray.map((e,index)=>(
+          <Card   hoverable className="Card" style={{margin:"10px 0"}}>
 
-<div id="divzero" style={{display:'flex',alignItems:'center',justifyContent:"space-between"}}>    
-<div className="divone">
-<input type="text" readOnly={pen} style={{ fontSize: "20px",width:"35vw", border: "none", background: "none", outline: "none" }} />
-</div>
+          <div id="divzero" style={{display:'flex',alignItems:'center',justifyContent:"space-between"}}>    
+          <div className="divone">
+          <input type="text" value={e.task} readOnly={pen} style={{ fontSize: "20px",width:"35vw", border: "none", background: "none", outline: "none" }} />
+          </div>
+          
+          <div className="div2" style={{display:'flex',alignItems:'center',justifyContent:"space-between",width:"150px"}}>
+  
+          {pen === false ? (
+  <TimePicker
+    className="custom-time-picker"
+    style={{ width: "90px", border: "none", background: "none", outline: "none" }}
+    defaultValue={dayjs('12:08', format)} 
+    format={format}
+    disabled={pen}
+  />
+) : (
+  e.time!=null ? <span>{e.time.format("HH:MM")}</span> :  <span>No Time Set</span> // Adjust this based on how e.time is formatted or displayed
+)}
 
-<div className="div2" style={{display:'flex',alignItems:'center',justifyContent:"space-between",width:"150px"}}>
-<TimePicker 
-      className="custom-time-picker"
-      style={{ width: "90px", border: "none", background: "none", outline: "none" }}
-      defaultValue={dayjs('12:08', format)} 
-      format={format}
-      disabled={pen}
-    />
-{pen===true ?  <FaPen onClick={(e)=>setpen(!pen)}/> : <FileDoneOutlined onClick={(e)=>setpen(!pen)}/>}
-<Checkbox></Checkbox>
-</div>
-</div>
-  </Card>
+          {pen===true ?  <FaPen onClick={(e)=>setpen(!pen)}/> : <FileDoneOutlined onClick={(e)=>setpen(!pen)}/>}
+          <Checkbox></Checkbox>
+          </div>
+          </div>
+            </Card>
+        ))
+      }
+    
 
         </Content>
-
+      
         <Button onClick={showModal} type="link" style={{width:'auto',position:"absolute",top:"80%",left:"90%",}}> <PlusOutlined  style={{fontSize:"5vh"}}/> </Button>
         <Modal title="Todo" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
     
@@ -134,15 +175,10 @@ const App: React.FC = () => {
       </Modal>
    
       </Layout>
-  
+      <Toaster />
     </Layout>
   );
 };
 
 
-
-/*
-
-
-*/
 export default App;
