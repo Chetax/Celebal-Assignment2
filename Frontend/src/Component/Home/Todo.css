@@ -1,0 +1,21 @@
+.custom-time-picker .ant-picker-input input {
+    font-size: 20px; /* Adjust to desired font size */
+  }
+  
+ .Card{
+    width: 80%;height:10%;padding:0 ;
+    border:0.1px solid rgba(0,0,0,0.5) ;
+    display:flex;
+    align-content:center;
+    justify-content:center;
+    flex-direction:column;
+ }
+ #divzero{
+    display:flex;
+    align-content:center;
+    justify-content:center;
+ 
+ }
+input{
+    
+}
