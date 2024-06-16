@@ -23,7 +23,7 @@ A simple To-Do List application built with React and TypeScript. This applicatio
 
 - React
 - TypeScript
-- Material UI
+- antD
 - React state management tool :- Zustand
 - Firebase Auth
 - Node js & Express.js
@@ -55,13 +55,16 @@ Make sure you have Node.js and npm installed on your machine.
    cd Backend
    npm install
 
+4. Create .env file  
+   MONGODB_URI=<password> of your mongoDB atlas
    
-4. Start the development frontend server:
+   
+5. Start the development frontend server:
    ```sh
    cd Frontend
    npm start
    
-5. Start the development backend server:
+6. Start the development backend server:
    ```sh
    cd Backend
    npm start
