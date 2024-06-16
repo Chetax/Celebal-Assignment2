@@ -1,12 +1,8 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./Logo.png";
 import { FaPen } from "react-icons/fa";
 import './Todo.css';
 import toast, { Toaster } from 'react-hot-toast';
-import { collection, addDoc, getDocs, updateDoc, doc, query, where  } from "firebase/firestore";
-import { getDatabase, ref, set, update } from "firebase/database";
-import { db } from '../../firebase';
-
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -21,8 +17,8 @@ import dayjs, { Dayjs } from 'dayjs';
 
 interface Task {
   task: string;
-  time: Dayjs | null;
-  status:boolean
+  time: string; 
+  status: boolean;
 }
 
 const format = 'HH:mm';
@@ -33,53 +29,58 @@ const App: React.FC = () => {
   const [task, setTask] = useState<string>("");
   const [time, setTime] = useState<Dayjs | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [taskArray, setTaskArray] = useState<Array<Task>>([]);
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [completeInd, setcompleteInd] = useState<number | null>(null);
+
+  const saveTasksToLocalStorage = (tasks: Task[]) => {
+    localStorage.setItem('taskArray', JSON.stringify(tasks));
+  };
+
+  const loadTasksFromLocalStorage = (): Task[] => {
+    const storedTasks = localStorage.getItem('taskArray');
+    return storedTasks ? JSON.parse(storedTasks) : [];
+  };
 
   const showModal = () => { setIsModalOpen(true); };
   const notifysucess = () => toast.success('Successfully created!');
   const notifyError = () => { toast.error("Error!"); };
 
   const onChange: TimePickerProps['onChange'] = (time, timeString) => { setTime(time); };
-  const handleComplete=()=>{
-     if(completeInd!==null){
-      const updatearray=[...taskArray];
-     updatearray[completeInd].status=true;
-     setTaskArray(updatearray);
-     setcompleteInd(null);
-     }
-  }
-  useEffect(()=>{
-    setTimeout(() => {
-      handleComplete();
-    }, 3000);
- 
-  },[completeInd])
+
+  const handleComplete = () => {
+    if (completeInd !== null) {
+      const tasks = loadTasksFromLocalStorage();
+      if (tasks.length > completeInd) {
+        tasks[completeInd].status = true;
+        saveTasksToLocalStorage(tasks);
+      }
+      setcompleteInd(null);
+    }
+  };
+
   const handleOk = () => {
     const formattedTime = time ? time.format(format) : null;
     let invalid = false;
+    const tasks = loadTasksFromLocalStorage();
 
-    taskArray.forEach((e, index) => {
-      if (e.task === task && editIndex === null ) {
+    tasks.forEach((e, index) => {
+      if (e.task === task && editIndex === null) {
         notifyError();
         invalid = true;
         return;
       }
     });
 
-    if (task === "" || time === null||invalid) {
+    if (task === "" || time === null || invalid) {
       notifyError();
     } else {
       if (!invalid) {
-        if (editIndex !== null) {
-          const updatedTasks = [...taskArray];
-          updatedTasks[editIndex] = { task, time: formattedTime ? dayjs(formattedTime, format) : null ,status:false};
-          setTaskArray(updatedTasks);
-          setEditIndex(null);
+        if (editIndex !== null && tasks.length > editIndex) {
+          tasks[editIndex] = { task, time: formattedTime || '', status: false };
         } else {
-          setTaskArray([...taskArray, { task, time: formattedTime ? dayjs(formattedTime, format) : null ,status:false}]);
+          tasks.push({ task, time: formattedTime || '', status: false });
         }
+        saveTasksToLocalStorage(tasks);
         notifysucess();
       }
       setTask("");
@@ -89,16 +90,17 @@ const App: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
+  const handleEdit = (index: number) => {
+    const tasks = loadTasksFromLocalStorage();
+    setEditIndex(index);
+    const taskToEdit = tasks[index];
+    setTask(taskToEdit.task);
+    setTime(taskToEdit.time ? dayjs(taskToEdit.time, format) : null);
+    showModal();
   };
 
-  const handleEdit = (index: number) => {
-    setEditIndex(index);
-    const taskToEdit = taskArray[index];
-    setTask(taskToEdit.task);
-    setTime(taskToEdit.time);
-    showModal();
+  const handleCancel = () => {
+    setIsModalOpen(false);
   };
 
   const handleDone = () => {
@@ -167,38 +169,38 @@ const App: React.FC = () => {
         </Header>
         <Content style={{ background: colorBgContainer, borderRadius: borderRadiusLG, padding: "0 15px" }}>
           {
-            taskArray.map((e, index) => (
-              e.status==false ? (
-              <Card hoverable className="Card" style={{ margin: "10px 0" }} key={index}>
-                <div id="divzero" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>
-                  <div className="divone">
-                    <input type="text" value={e.task} readOnly={editIndex !== index} style={{ fontSize: "20px", width: "35vw", border: "none", background: "none", outline: "none" }} />
-                  </div>
+            loadTasksFromLocalStorage().map((e, index) => (
+              e.status===false ? (
+                <Card hoverable className="Card" style={{ margin: "10px 0" }} key={index}>
+                  <div id="divzero" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>
+                    <div className="divone">
+                      <input type="text" value={e.task} readOnly={editIndex !== index} style={{ fontSize: "20px", width: "35vw", border: "none", background: "none", outline: "none" }} />
+                    </div>
 
-                  <div className="div2" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between", width: "150px" }}>
-                    {editIndex !== index ? (
-                      e.time != null ? <span>{e.time.format("HH:mm")}</span> : <span>No Time Set</span>
-                    ) : (
-                      <TimePicker
-                        className="custom-time-picker"
-                        style={{ width: "90px", border: "none", background: "none", outline: "none" }}
-                        value={time}
-                        format={format}
-                        onChange={onChange}
-                      />
-                    )}
-                    {editIndex === index ? <FileDoneOutlined onClick={handleDone} /> : <FaPen onClick={() => handleEdit(index)} />}
-                    <Checkbox onClick={()=>setcompleteInd(index)}></Checkbox>
+                    <div className="div2" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between", width: "150px" }}>
+                      {editIndex !== index ? (
+                        e.time ? <span>{e.time}</span> : <span>No Time Set</span>
+                      ) : (
+                        <TimePicker
+                          className="custom-time-picker"
+                          style={{ width: "90px", border: "none", background: "none", outline: "none" }}
+                          value={time}
+                          format={format}
+                          onChange={onChange}
+                        />
+                      )}
+                      {editIndex === index ? <FileDoneOutlined onClick={handleDone} /> : <FaPen onClick={() => handleEdit(index)} />}
+                      <Checkbox onClick={() => setcompleteInd(index)}></Checkbox>
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
               ) : <></>
             ))
           }
         </Content>
 
         <Button onClick={showModal} type="link" style={{ width: 'auto', position: "absolute", top: "80%", left: "90%", }}> <PlusOutlined style={{ fontSize: "5vh" }} /> </Button>
-        <Modal title="Todo" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title="Todo" visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
           <div className="div" style={{ display: 'flex', alignContent: 'center', justifyContent: 'start' }}>
             <label style={{ fontSize: "20px" }}>Enter Task: </label>
             <input type="text" value={task} onChange={(e) => { setTask(e.target.value) }} style={{ width: "15vw", marginLeft: "15px" }} />
