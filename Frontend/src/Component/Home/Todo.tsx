@@ -16,8 +16,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Layout, Modal, Menu, theme, Card, Checkbox, TimePicker, TimePickerProps } from "antd";
 import dayjs, { Dayjs } from 'dayjs';
-import { getUnCheckedTasks,getCheckedTasks, createTask, updateTask, deleteTask } from '../../Api';
-import { Task } from "@mui/icons-material";
+import { getUnCheckedTasks, getCheckedTasks, createTask, updateTask, deleteTask } from '../../Api';
 
 interface Task {
   _id?: string;
@@ -30,10 +29,10 @@ const format = 'HH:mm';
 const { Header, Sider, Content } = Layout;
 
 const App: React.FC = () => {
-  const redirect=useNavigate();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [task, setTask] = useState<string>("");
-  const [datashow, setdatashow] = useState<boolean>(false);
+  const [datashow, setDatashow] = useState<boolean>(false);
   const [time, setTime] = useState<Dayjs | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editIndex, setEditIndex] = useState<number | null>(null);
@@ -45,23 +44,20 @@ const App: React.FC = () => {
 
   const fetchTasks = async () => {
     try {
-      let response: Task[] = [];
-        response = datashow===false ? await getUnCheckedTasks()  : await getCheckedTasks() ;
+      const response = datashow === false ? await getUnCheckedTasks() : await getCheckedTasks();
       console.log(response);
       setTasks(response);
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
   };
-  
-
 
   const showModal = () => {
     setIsModalOpen(true);
   };
 
-  const notifySuccess = () => toast.success('Successfully created!');
-  const notifyError = () => toast.error("Error!");
+  const notifySuccess = (message: string) => toast.success(message);
+  const notifyError = (message: string) => toast.error(message);
 
   const onChange: TimePickerProps['onChange'] = (time, timeString) => {
     setTime(time);
@@ -69,29 +65,34 @@ const App: React.FC = () => {
 
   const handleOk = async () => {
     const formattedTime = time ? time.format(format) : null;
-  
+
     if (!task || !time) {
-      notifyError();
+      notifyError("Please enter a task and select a time.");
       return;
     }
-  
+
     try {
-      if(editIndex!=null){
-      const editedTask = await updateTask(tasks[editIndex]._id!, task, formattedTime!, tasks[editIndex].status);
-      const updatedTasks = [...tasks];
-      updatedTasks[editIndex] = editedTask;
-      setTasks(updatedTasks);
-    }
-      notifySuccess();
+      if (editIndex !== null) {
+        const editedTask = await updateTask(tasks[editIndex]._id!, task, formattedTime!, tasks[editIndex].status);
+        const updatedTasks = [...tasks];
+        updatedTasks[editIndex] = editedTask;
+        setTasks(updatedTasks);
+        notifySuccess("Task updated successfully!");
+      } else {
+        const newTask = await createTask(task, formattedTime!);
+        setTasks([...tasks, newTask]);
+        notifySuccess("Task created successfully!");
+      }
       setIsModalOpen(false);
     } catch (error) {
-      console.error('Error updating task:', error);
-      notifyError();
+      console.error('Error creating/updating task:', error);
+      notifyError("Error creating/updating task.");
     }
-  
+
     setTask("");
     setTime(null);
   };
+
   const handleEdit = (index: number) => {
     const taskToEdit = tasks[index];
     setEditIndex(index);
@@ -102,13 +103,6 @@ const App: React.FC = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-  };
-
-  const handleDone = () => {
-    setEditIndex(null);
-    setTask("");
-    setTime(null);
-    fetchTasks(); // Refresh tasks after editing
   };
 
   const handleCheckboxChange = async (index: number) => {
@@ -145,13 +139,12 @@ const App: React.FC = () => {
           items={[
             {
               key: "1",
-              label: "Todays Task",
+              label: "Today's Task",
               icon: <AppstoreOutlined />,
               children: [
-                { key: "5", label: "Complete", onClick: ()=>setdatashow(true) },
-                { key: "6", label: "Remains" ,onClick: ()=>setdatashow(false)},
+                { key: "5", label: "Complete", onClick: () => setDatashow(true) },
+                { key: "6", label: "Remains", onClick: () => setDatashow(false) },
               ],
-             
             },
             {
               key: "2",
@@ -181,27 +174,24 @@ const App: React.FC = () => {
           />
         </Header>
         <Content style={{ background: colorBgContainer, borderRadius: borderRadiusLG, padding: "0 15px" }}>
-  {
-    tasks.map((task, index) => (
-      <Card hoverable className="Card" style={{ margin: "10px 0" }} key={task._id}>
-        <div id="divzero" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>
-          <div className="divone">
-            <input type="text" value={task.task} readOnly style={{ fontSize: "20px", width: "35vw", border: "none", background: "none", outline: "none" }} />
-          </div>
-          <div className="div2" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between", width: "150px" }}>
-            {task.time ? <span>{task.time}</span> : <span>No Time Set</span>}
-            <Checkbox checked={task.status} onChange={() => handleCheckboxChange(index)}></Checkbox>
-            <FaPen onClick={() => handleEdit(index)} />
-            
-          </div>
-        </div>
-      </Card>
-    ))
-  }
-</Content>
-
-
-        <Button onClick={showModal} type="link" style={{ width: 'auto', position: "absolute", top: "80%", left: "90%", }}> <PlusOutlined style={{ fontSize: "5vh" }} /> </Button>
+          {tasks.map((task, index) => (
+            <Card hoverable className="Card" style={{ margin: "10px 0" }} key={task._id}>
+              <div id="divzero" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between" }}>
+                <div className="divone">
+                  <input type="text" value={task.task} readOnly style={{ fontSize: "20px", width: "35vw", border: "none", background: "none", outline: "none" }} />
+                </div>
+                <div className="div2" style={{ display: 'flex', alignItems: 'center', justifyContent: "space-between", width: "150px" }}>
+                  {task.time ? <span>{task.time}</span> : <span>No Time Set</span>}
+                  <Checkbox checked={task.status} onChange={() => handleCheckboxChange(index)}></Checkbox>
+                  <FaPen onClick={() => handleEdit(index)} />
+                </div>
+              </div>
+            </Card>
+          ))}
+        </Content>
+        <Button onClick={showModal} type="link" style={{ width: 'auto', position: "absolute", top: "80%", left: "90%", }}>
+          <PlusOutlined style={{ fontSize: "5vh" }} />
+        </Button>
         <Modal title="Todo" visible={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
           <div className="div" style={{ display: 'flex', alignContent: 'center', justifyContent: 'start' }}>
             <label style={{ fontSize: "20px" }}>Enter Task: </label>

@@ -2,6 +2,9 @@ import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();  // Load environment variables from .env file
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -11,12 +14,14 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB connection
-const uri = 'mongodb://localhost:27017';
-mongoose.connect(uri);
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log('MongoDB database connection established successfully');
-});
+const uri = process.env.MONGODB_URI;
+if (!uri) {
+  throw new Error('MongoDB URI not defined in environment variables');
+}
+
+mongoose.connect(uri)
+  .then(() => console.log('MongoDB database connection established successfully'))
+  .catch((err) => console.error('Error connecting to MongoDB:', err));
 
 // Task schema and model
 interface ITask extends mongoose.Document {
@@ -36,7 +41,6 @@ const Task = mongoose.model<ITask>('Task', taskSchema);
 app.get('/tasksunchecked', async (req: Request, res: Response) => {
   try {
     const uncheckedTasks = await Task.find({ status: false });
-    
     res.json(uncheckedTasks);
   } catch (err) {
     console.error('Error fetching unchecked tasks:', err);
@@ -44,12 +48,9 @@ app.get('/tasksunchecked', async (req: Request, res: Response) => {
   }
 });
 
-
-
 app.get('/taskschecked', async (req: Request, res: Response) => {
   try {
-    const tasks = await Task.find({ status: true })
-    
+    const tasks = await Task.find({ status: true });
     res.json(tasks);
   } catch (err) {
     console.error('Error fetching tasks:', err);
@@ -68,7 +69,7 @@ app.post('/tasks', async (req: Request, res: Response) => {
   }
 });
 
-app.put('/tasks/:id', async (req, res) => {
+app.put('/tasks/:id', async (req: Request, res: Response) => {
   try {
     const { task, time, status } = req.body;
     const updatedTask = await Task.findByIdAndUpdate(req.params.id, { task, time, status }, { new: true });

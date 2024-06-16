@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 const BASE_URL = 'http://localhost:5000'; // Replace with your backend URL
 
 interface Task {
-  _id: string;
+  _id?: string;
   task: string;
   time: string;
   status: boolean;
@@ -12,7 +12,6 @@ interface Task {
 export const getUnCheckedTasks = async (): Promise<Task[]> => {
   try {
     const response: AxiosResponse<Task[]> = await axios.get(`${BASE_URL}/tasksunchecked`);
-    
     return response.data;
   } catch (error) {
     handleApiError(error);
