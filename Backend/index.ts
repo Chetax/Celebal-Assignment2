@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // MongoDB connection
-const uri = process.env.MONGODB_URI;
+const uri = `mongodb+srv://padhenchetan:${process.env.MONGODB_URI}@cluster0.igroplu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 if (!uri) {
   throw new Error('MongoDB URI not defined in environment variables');
 }
