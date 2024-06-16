@@ -55,16 +55,13 @@ Make sure you have Node.js and npm installed on your machine.
    cd Backend
    npm install
 
-4. Create .env file :
- 
-   check .env.exmaple file
    
-5. Start the development frontend server:
+4. Start the development frontend server:
    ```sh
    cd Frontend
    npm start
    
-6. Start the development backend server:
+5. Start the development backend server:
    ```sh
    cd Backend
    npm start
